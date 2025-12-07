@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -25,13 +26,20 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student findById(Integer id) {
-        return studentRepository.findById(id);
+        Optional<Student> result = studentRepository.findById(id);
+        Student theStudent = null;
+
+        if(result.isPresent()){
+            theStudent = result.get();
+        }
+
+        return theStudent;
+
     }
 
     @Override
     public Student save(StudentValidation studentValidation) {
         Student student = new Student();
-        student.setId(studentValidation.getId());
         student.setNombres(studentValidation.getNombres());
         student.setApellidos(studentValidation.getApellidos());
         student.setMatricula(studentValidation.getMatricula());
@@ -42,19 +50,37 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student update(Integer id, StudentValidation studentValidation) {
-        Student existingStudent = studentRepository.findById(id);
-        if(existingStudent == null) return null;
+        Optional<Student> result = studentRepository.findById(id);
 
-        existingStudent.setNombres(studentValidation.getNombres());
-        existingStudent.setApellidos(studentValidation.getApellidos());
-        existingStudent.setMatricula(studentValidation.getMatricula());
-        existingStudent.setPromedio(studentValidation.getPromedio());
+        Student theStudent = null;
 
-        return studentRepository.update(id, existingStudent);
+        if(result.isEmpty()){
+            return null;
+        }
+
+        theStudent = result.get();
+
+        theStudent.setNombres(studentValidation.getNombres());
+        theStudent.setApellidos(studentValidation.getApellidos());
+        theStudent.setMatricula(studentValidation.getMatricula());
+        theStudent.setPromedio(studentValidation.getPromedio());
+
+        return studentRepository.save(theStudent);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return studentRepository.deleteById(id);
+        Optional<Student> result = studentRepository.findById(id);
+
+        Student theStudent = null;
+
+        if(result.isEmpty()){
+            return false;
+        }
+
+        theStudent = result.get();
+        studentRepository.deleteById(theStudent.getId());
+
+        return true;
     }
 }

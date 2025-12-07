@@ -3,57 +3,84 @@ package com.uady.aws_rest_project.service;
 import com.uady.aws_rest_project.model.Profesor;
 import com.uady.aws_rest_project.repository.ProfesorRepository;
 import com.uady.aws_rest_project.validation.ProfesorValidation;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfesorServiceImpl implements ProfesorService{
-    private final ProfesorRepository ProfesorRepository;
+    private final ProfesorRepository profesorRepository;
 
     @Autowired
-    public ProfesorServiceImpl(ProfesorRepository ProfesorRepository) {
-        this.ProfesorRepository = ProfesorRepository;
+    public ProfesorServiceImpl(ProfesorRepository profesorRepository) {
+        this.profesorRepository = profesorRepository;
     }
 
     @Override
     public List<Profesor> getAll() {
-        return ProfesorRepository.findAll();
+        return profesorRepository.findAll();
     }
 
     @Override
     public Profesor findById(Integer id) {
-        return ProfesorRepository.findById(id);
+
+        Optional<Profesor> result = profesorRepository.findById(id);
+        Profesor theProfesor = null;
+
+        if(result.isPresent()){
+            theProfesor = result.get();
+        }
+
+        return theProfesor;
     }
 
     @Override
-    public Profesor save(ProfesorValidation ProfesorValidation) {
-        Profesor Profesor = new Profesor();
-        Profesor.setId(ProfesorValidation.getId());
-        Profesor.setNombres(ProfesorValidation.getNombres());
-        Profesor.setApellidos(ProfesorValidation.getApellidos());
-        Profesor.setNumeroEmpleado(ProfesorValidation.getNumeroEmpleado());
-        Profesor.setHorasClase(ProfesorValidation.getHorasClase());
+    @Transactional
+    public Profesor save(ProfesorValidation profesorValidation) {
+        Profesor profesor = new Profesor();
+        profesor.setNombres(profesorValidation.getNombres());
+        profesor.setApellidos(profesorValidation.getApellidos());
+        profesor.setNumeroEmpleado(profesorValidation.getNumeroEmpleado());
+        profesor.setHorasClase(profesorValidation.getHorasClase());
 
-        return ProfesorRepository.save(Profesor);
+        return profesorRepository.save(profesor);
     }
 
     @Override
-    public Profesor update(Integer id, ProfesorValidation ProfesorValidation) {
-        Profesor existingProfesor = ProfesorRepository.findById(id);
-        if (existingProfesor == null) return null;
+    public Profesor update(Integer id, ProfesorValidation profesorValidation) {
+        Optional<Profesor> result = profesorRepository.findById(id);
+        Profesor theProfesor = null;
 
-        existingProfesor.setNombres(ProfesorValidation.getNombres());
-        existingProfesor.setApellidos(ProfesorValidation.getApellidos());
-        existingProfesor.setNumeroEmpleado(ProfesorValidation.getNumeroEmpleado());
-        existingProfesor.setHorasClase(ProfesorValidation.getHorasClase());
+        if(result.isEmpty()){
+            return null;
+        }
 
-        return ProfesorRepository.update(id, existingProfesor);
+        theProfesor = result.get();
+
+        theProfesor.setNombres(profesorValidation.getNombres());
+        theProfesor.setApellidos(profesorValidation.getApellidos());
+        theProfesor.setNumeroEmpleado(profesorValidation.getNumeroEmpleado());
+        theProfesor.setHorasClase(profesorValidation.getHorasClase());
+
+        return profesorRepository.save(theProfesor);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return ProfesorRepository.deleteById(id);
+
+        Optional<Profesor> result = profesorRepository.findById(id);
+        Profesor theProfesor = null;
+
+        if(result.isEmpty()){
+            return false;
+        }
+
+        theProfesor = result.get();
+        profesorRepository.deleteById(theProfesor.getId());
+
+        return true;
     }
 }

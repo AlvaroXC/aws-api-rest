@@ -13,43 +13,43 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/profesores")
-public class ProfesorController {
-    private final ProfesorService ProfesorService;
+public class ProfessorController {
+    private final ProfesorService profesorService;
 
     @Autowired
-    public ProfesorController(ProfesorService ProfesorService) {
-        this.ProfesorService = ProfesorService;
+    public ProfessorController(ProfesorService profesorService) {
+        this.profesorService = profesorService;
     }
 
     @GetMapping
     public ResponseEntity<List<Profesor>> getAll() {
-        return ResponseEntity.ok(ProfesorService.getAll());
+        return ResponseEntity.ok(profesorService.getAll());
     }
 
     @PostMapping
-    public ResponseEntity<Profesor> save(@RequestBody @Valid ProfesorValidation ProfesorValidation) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ProfesorService.save(ProfesorValidation));
+    public ResponseEntity<Profesor> save(@RequestBody @Valid ProfesorValidation profesorValidation) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(profesorService.save(profesorValidation));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Profesor> getProfesor(@PathVariable Integer id) {
-        Profesor Profesor = ProfesorService.findById(id);
-        return Profesor != null
-                ? ResponseEntity.ok(Profesor)
+        Profesor profesor = profesorService.findById(id);
+        return profesor != null
+                ? ResponseEntity.ok(profesor)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Profesor> update(@PathVariable Integer id, @Valid @RequestBody ProfesorValidation ProfesorValidation) {
-        Profesor ProfesorUpdated = ProfesorService.update(id, ProfesorValidation);
-        return ProfesorUpdated != null
-                ? ResponseEntity.ok(ProfesorUpdated)
+    public ResponseEntity<Profesor> update(@PathVariable Integer id, @Valid @RequestBody ProfesorValidation profesorValidation) {
+        Profesor professorUpdated = profesorService.update(id, profesorValidation);
+        return professorUpdated != null
+                ? ResponseEntity.ok(professorUpdated)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        boolean deleted = ProfesorService.delete(id);
+        boolean deleted = profesorService.delete(id);
         return deleted
                 ? ResponseEntity.ok().build()
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
