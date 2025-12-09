@@ -2,6 +2,7 @@ package com.uady.aws_rest_project.controller;
 
 import com.uady.aws_rest_project.model.Student;
 import com.uady.aws_rest_project.service.S3Service;
+import com.uady.aws_rest_project.service.SnsService;
 import com.uady.aws_rest_project.service.StudentService;
 import com.uady.aws_rest_project.validation.StudentValidation;
 import jakarta.validation.Valid;
@@ -23,11 +24,13 @@ public class StudentController {
 
     private final StudentService studentService;
     private final S3Service s3Service;
+    private final SnsService snsService;
 
     @Autowired
-    public StudentController(StudentService studentService, S3Service s3Service ){
+    public StudentController(StudentService studentService, S3Service s3Service, SnsService snsService ){
         this.studentService = studentService;
         this.s3Service = s3Service;
+        this.snsService = snsService;
     }
     
     @GetMapping
@@ -82,6 +85,22 @@ public class StudentController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PostMapping("/{id}/email")
+    public ResponseEntity<Map<String, String>> sendEmail(@PathVariable Integer id){
+        Student student = studentService.findById(id);
+
+        if (student == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        snsService.sendGradesNotification(student);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("mensaje", "Correo enviado exitosamente");
+
+        return ResponseEntity.ok(response);
     }
 
 }

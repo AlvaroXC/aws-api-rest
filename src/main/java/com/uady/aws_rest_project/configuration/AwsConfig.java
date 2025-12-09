@@ -7,6 +7,7 @@ import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
 public class AwsConfig {
@@ -33,6 +34,20 @@ public class AwsConfig {
 
         return S3Client.builder()
                 .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .build();
+    }
+
+    @Bean
+    public SnsClient SnsClient(){
+        AwsSessionCredentials credentials = AwsSessionCredentials.create(
+                accessKeyId,
+                secretAccessKey,
+                sessionToken
+        );
+
+        return SnsClient.builder().
+                region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
     }
