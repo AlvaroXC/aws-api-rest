@@ -29,6 +29,12 @@ public class Student {
     @Column(name="promedio")
     private Double promedio;
 
+    @Column(name = "foto_perfil_url")
+    private String fotoPerfilUrl;
+
+    @Column(name = "password")
+    private String password;
+
     public Integer getId() {
         return id;
     }
@@ -49,6 +55,14 @@ public class Student {
         return promedio;
     }
 
+    public String getFotoPerfilUrl() {
+        return fotoPerfilUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     public void setNombres(String nombres) {
         this.nombres = nombres;
     }
@@ -63,6 +77,14 @@ public class Student {
 
     public void setPromedio(Double promedio) {
         this.promedio = promedio;
+    }
+
+    public void setFotoPerfilUrl(String fotoPerfilUrl) {
+        this.fotoPerfilUrl = fotoPerfilUrl;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

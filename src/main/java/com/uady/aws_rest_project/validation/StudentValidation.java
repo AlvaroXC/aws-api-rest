@@ -22,4 +22,8 @@ public class StudentValidation {
     @DecimalMax(value = "10.0", message = "El promedio no puede ser mayor a 10.0")
     private Double promedio;
 
+    @NotNull(message = "El password es obligatorio")
+    @Size(min = 8, message = "El password debe contener al menos 8 caracteres")
+    private String password;
+
 }
