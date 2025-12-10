@@ -17,10 +17,9 @@ public class SessionService {
 
     private DynamoDbTable<Session> sessionTable;
     private final StudentService studentService;
-    @Value("${aws.dynamodb.table-name}")
-    private String tableName;
 
-    public SessionService(DynamoDbEnhancedClient enhancedClient, StudentService studentService) {
+
+    public SessionService(DynamoDbEnhancedClient enhancedClient, StudentService studentService, @Value("${aws.dynamodb.table-name}") String tableName) {
         this.studentService = studentService;
         this.sessionTable = enhancedClient.table(tableName, TableSchema.fromBean(Session.class));
     }
